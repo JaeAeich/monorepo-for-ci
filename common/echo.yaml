@@ -1,0 +1,17 @@
+---
+name: Echo passed value
+description: Echo a passed value to the CI
+
+inputs:
+  os:
+    default: ubuntu-latest
+    description: The operating system to use
+  value:
+    default: 'Hello from monorepo for gh CI actions :)'
+    description: Passed value that you need to be echoed
+
+runs:
+  using: composite
+  steps:
+    - run: echo "${{ inputs.value }}"
+...
