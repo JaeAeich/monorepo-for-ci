@@ -14,5 +14,6 @@ runs:
   using: composite
   steps:
     - run: echo "${{ inputs.value }}"
+      shell: bash
 ...
 
