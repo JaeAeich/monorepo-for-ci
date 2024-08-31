@@ -4,7 +4,10 @@ description: Checks if the PR title follows semantic guidelines.
 
 inputs:
   github_token:
-    description: 'The GitHub token to use for authentication'
+    description: The GitHub token to use for authentication
+    required: true
+  pr_title:
+    description: The title of the pull request
     required: true
 
 runs:
@@ -37,7 +40,7 @@ runs:
     - name: Check length of PR title
       shell: bash
       run: |
-        PR_TITLE="${{ github.event.pull_request.title }}"
+        PR_TITLE="${{ inputs.pr_title }}"
         if [ ${#PR_TITLE} -gt 50 ]; then
           echo "The PR title is too long. Please keep it under 50 characters."
           exit 1
