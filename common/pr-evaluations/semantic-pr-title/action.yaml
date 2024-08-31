@@ -13,6 +13,12 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Debug GitHub Token and PR Title
+      shell: bash
+      run: |
+        echo "GITHUB_TOKEN: ${{ inputs.github_token }}"
+        echo "PR_TITLE: ${{ inputs.pr_title }}"
+
     - name: Check if the PR title is semantic
       uses: amannn/action-semantic-pull-request@v5
       env:
