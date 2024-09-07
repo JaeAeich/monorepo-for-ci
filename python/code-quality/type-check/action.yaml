@@ -4,6 +4,9 @@ description: Runs a type check on the codebase to ensure type safety and
   correctness.
 
 inputs:
+  os:
+    description: Os to use
+    default: "ubuntu-latest"
   python_version:
     description: Python version to use
     default: "3.12"
@@ -32,6 +35,7 @@ runs:
     - name: Set up environment
       uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
       with:
+        os: ${{ inputs.os }}
         python_version: ${{ inputs.python_version }}
         poetry_install_options: ${{ inputs.poetry_install_options }}
         poetry_export_options: ${{ inputs.poetry_export_options }}
