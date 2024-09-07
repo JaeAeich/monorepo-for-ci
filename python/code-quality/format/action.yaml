@@ -4,7 +4,7 @@ description: Checks and ensures the code is formatted according to the defined s
 
 inputs:
   os:
-    description: Os to use
+    description: OS to use
     default: "ubuntu-latest"
   python_version:
     description: Python version to use
@@ -20,7 +20,8 @@ inputs:
     required: false
     default: "--only=code_quality"
   github_token:
-    description: Githun token
+    description: GitHub token for authentication
+    required: true
 
 runs:
   using: composite
@@ -41,17 +42,43 @@ runs:
       run: poetry run ruff format --check
 
     - name: Comment on Failure
-      if: failure()
+      if: ${{ failure() }}
       uses: peter-evans/create-or-update-comment@v3
       with:
-        token: ${{ inputs.GITHUB_TOKEN }}
+        token: ${{ inputs.github_token }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          :x: The code style check **failed** on **${{ inputs.os }}** with Python **${{ inputs.python_version }}**.
-          Please review the following details:
-          - Poetry Install Options: `${{ inputs.poetry_install_options }}`
-          - Poetry Export Options: `${{ inputs.poetry_export_options }}`
+          :x: **Code Style Check Failed**
 
-          Check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) 
-          for more details.
+          Hi @${{ github.event.pull_request.user.login }},
+
+          Your pull request **${{ github.event.pull_request.title }}** has failed the code style check on **${{ inputs.os }}** with Python **${{ inputs.python_version }}**. 
+
+          :point_right: Please address the issues to ensure consistency and adherence to the project's coding standards. You can follow the [code style guide](<link-to-docs>) to fix these issues.
+
+          :bulb: **Need help?** You can tag the maintainers by commenting `@maintainer-username` in this thread for assistance.
+
+          <details>
+          <summary> :gear: <strong>Environment Details (click to expand)</strong> </summary>
+
+          - **Workflow**: ${{ github.workflow }}
+          - **Job Name**: ${{ github.job }}
+          - **Run ID**: ${{ github.run_id }}
+          - **Run Number**: ${{ github.run_number }}
+          - **Triggered by**: ${{ github.event_name }}
+          - **Commit Message**: ${{ github.event.head_commit.message }}
+          - **Commit SHA**: `${{ github.sha }}`
+          - **Branch**: `${{ github.ref }}`
+
+          **Environment Details:**
+          - **Operating System**: `${{ inputs.os }}`
+          - **Python Version**: `${{ inputs.python_version }}`
+          - **Poetry Install Options**: `${{ inputs.poetry_install_options }}`
+          - **Poetry Export Options**: `${{ inputs.poetry_export_options }}`
+
+          </details>
+
+          :page_with_curl: You can review the full workflow logs for more information: [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+          :wave: **Happy Coding!** If you need any assistance, don't hesitate to reach out.
 ...
