@@ -19,6 +19,8 @@ inputs:
       changes for cache invalidation
     required: false
     default: "--only=code_quality"
+  github_token:
+    description: Githun token
 
 runs:
   using: composite
@@ -37,4 +39,19 @@ runs:
     - name: Check code style
       shell: bash
       run: poetry run ruff format --check
+
+    - name: Comment on Failure
+      if: failure()
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        token: ${{ inputs.GITHUB_TOKEN }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          :x: The code style check **failed** on **${{ inputs.os }}** with Python **${{ inputs.python_version }}**.
+          Please review the following details:
+          - Poetry Install Options: `${{ inputs.poetry_install_options }}`
+          - Poetry Export Options: `${{ inputs.poetry_export_options }}`
+
+          Check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) 
+          for more details.
 ...
