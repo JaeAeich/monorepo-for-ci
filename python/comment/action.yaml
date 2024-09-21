@@ -63,15 +63,14 @@ runs:
       with:
         issue-number: ${{ inputs.pull_request_number }}
         comment-author: 'github-actions[bot]'
-        body-includes: "Build output"
+        body-includes: ${{ steps.globals.outputs.BODY_INCLUDES }}
 
     - name: Fill in the template
       if: steps.fc.outputs.comment-id == ''
       id: fill-template
       shell: bash
       run: |
-        FIRST_MESSAGE="
-        <details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
+        FIRST_MESSAGE="<details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
         UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $FIRST_MESSAGE")
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
 
@@ -111,8 +110,7 @@ runs:
       id: update-message
       shell: bash
       run: |
-        NEW_MESSAGE="
-        <details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
+        NEW_MESSAGE="<details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
         UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $NEW_MESSAGE")
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
 
