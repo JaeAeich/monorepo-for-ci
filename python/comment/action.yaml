@@ -71,11 +71,7 @@ runs:
       shell: bash
       run: |
         FIRST_MESSAGE="
-        <details>
-          ${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}
-          ${{ inputs.message }}
-        </details>
-        "
+        <details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
         UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $FIRST_MESSAGE")
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
 
@@ -116,11 +112,7 @@ runs:
       shell: bash
       run: |
         NEW_MESSAGE="
-        <details>
-          ${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}
-          ${{ inputs.message }}
-        </details>
-        "
+        <details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
         UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $NEW_MESSAGE")
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
 
