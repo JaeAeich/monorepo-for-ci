@@ -77,14 +77,14 @@ runs:
       run: echo "COMMENT_PRESENT=${{ steps.fc.outputs.comment-id != '' }}" >> $GITHUB_ENV
 
     - name: Create a new comment or update existing comment
-      if: steps.globals.outputs.COMMENT_PRESENT == "false"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'false'
       uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ inputs.pull_request_number }}
         body: ${{ steps.globals.outputs.MESSAGE_BODY }}
 
     - name: Fill in the template
-      if: steps.globals.outputs.COMMENT_PRESENT == "false"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'false'
       shell: bash
       run: |
         FIRST_MESSAGE="
@@ -97,14 +97,14 @@ runs:
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> $GITHUB_ENV
 
     - name: Comment with the updated template
-      if: steps.globals.outputs.COMMENT_PRESENT == "false"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'false'
       uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ inputs.pull_request_number }}
         body: ${{ steps.globals.outputs.MESSAGE_BODY }}
 
     - name: Remove all occurrences of latest indicator from the message for previous fails
-      if: steps.globals.outputs.COMMENT_PRESENT == "true"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'true'
       shell: bash
       run: |
         PREV_MESSAGE="${{ steps.fc.outputs.comment-body }}"
@@ -112,21 +112,21 @@ runs:
         echo "MESSAGE_BODY=$CLEANED_MESSAGE" >> $GITHUB_ENV
     
     - name: Check if the info for failing CI and step is already written
-      if: steps.globals.outputs.COMMENT_PRESENT == "true"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'true'
       shell: bash
       run: |
         IS_PRESENT=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | grep -c "${{ inputs.ci_name }}-${{ inputs.step_name }}")
         echo "ALREADY_COMMENTED=$([[ $IS_PRESENT -gt 0 ]] && echo true || echo false)" >> $GITHUB_ENV
     
     - name: If already commented, add latest annotation to summary
-      if: steps.globals.outputs.COMMENT_PRESENT == "true" && steps.globals.outputs.ALREADY_COMMENTED == "true"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.globals.outputs.ALREADY_COMMENTED == 'true'
       shell: bash
       run: |
         UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "s|${{ steps.globals.outputs.SUMMARY }}|${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}|g")
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> $GITHUB_ENV
 
     - name: Update the message with new details
-      if: steps.globals.outputs.COMMENT_PRESENT == "true" && steps.globals.outputs.ALREADY_COMMENTED == "true"
+      if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.globals.outputs.ALREADY_COMMENTED == 'true'
       shell: bash
       run: |
         NEW_MESSAGE="
