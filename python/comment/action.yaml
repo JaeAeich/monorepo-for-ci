@@ -42,35 +42,20 @@ runs:
       run: |
         echo "SLACK=https://slack.com" >> "${GITHUB_OUTPUT}"
         echo "BODY_INCLUDES=Hi there :sparkles:" >> "${GITHUB_OUTPUT}"
-        
-        # Define the MESSAGE_BODY variable correctly
-        MESSAGE_BODY=$(cat <<EOF
-# Helper Bot :robot:
-
-Hi there :sparkles:
-
-I'll try to help and redirect you @${username} to the right documentation and 
-quick fixes for CI breaks, so check this message for new updates. 
-Explore the below mentioned **Latest** marked collapsibles.
-
-## Failed CIs
-
-## Drop a hey! :wave:
-
-Don't hesitate to ask for help in the channel, we are here to assist you.
-[Join community](https://slack.com) if you haven't already and check out
-#${slack_channel} channel for more details on this project.
-EOF
-        )
-
-        # Write MESSAGE_BODY to GITHUB_OUTPUT
-        echo "MESSAGE_BODY<<EOF" >> "${GITHUB_OUTPUT}"
-        echo "$MESSAGE_BODY" >> "${GITHUB_OUTPUT}"
-        echo "EOF" >> "${GITHUB_OUTPUT}"
-
-        echo "LATEST_COMMIT_INDICATOR=:star: ${commit_id}" >> "${GITHUB_OUTPUT}"
-        echo "SUMMARY=<summary>:point_right: ${ci_name} :boom: ${step_name}</summary>" >> "${GITHUB_OUTPUT}"
-        echo "SUMMARY_WITH_INDICATOR=<summary>:star: ${commit_id} <summary>:point_right: ${ci_name} :boom: ${step_name}</summary>" >> "${GITHUB_OUTPUT}"
+        MESSAGE_BODY="# Helper Bot :robot:\n\n\
+        Hi there :sparkles:\n\n\
+        I'll try to help and redirect you @${username} to the right documentation and \n\
+        quick fixes for CI breaks, so check this message for new updates.\n\
+        Explore the below mentioned **Latest** marked collapsibles.\n\n\
+        ## Failed CIs\n\n\
+        ## Drop a hey! :wave:\n\n\
+        Don't hesitate to ask for help in the channel, we are here to assist you.\n\
+        [Join community](https://slack.com) if you haven't already and check out\n\
+        #${slack_channel} channel for more details on this project."
+        echo "MESSAGE_BODY=${MESSAGE_BODY}" >> "${GITHUB_OUTPUT}"
+        echo "LATEST_COMMIT_INDICATOR=:star: ${{ inputs.commit_id }}" >> "${GITHUB_OUTPUT}"
+        echo "SUMMARY=<summary>:point_right: ${{ inputs.ci_name }} :boom: ${{ inputs.step_name}}</summary>" >> "${GITHUB_OUTPUT}"
+        echo "SUMMARY_WITH_INDICATOR=<summary>:star: ${{ inputs.commit_id }} <summary>:point_right: ${{ inputs.ci_name }} :boom: ${{ inputs.step_name}}</summary>" >> "${GITHUB_OUTPUT}"
 
     - name: Find if comment is already present
       uses: peter-evans/find-comment@v3
