@@ -1,0 +1,135 @@
+---
+name: Commenting bot to report CI failures and suggest fixes
+description: |
+  This action is used to comment on a pull request with the CI failure details
+  and suggest fixes to the user. It checks if the comment is already present and
+  updates the comment with the latest CI failure details.
+
+env:
+  SLACK: https://slack.com
+  BODY_INCLUDES: "Hi there :sparkles:"
+  MESSAGE_BODY: |
+      # Helper Bot :robot:
+
+      ${{ env.BODY_INCLUDES }}
+
+      I'll try to help and redirect you @USERNAME to the right documentation and 
+      quick fixes for CI breaks, so check this message for new updates. 
+      Explore the below mentioned **Latest** marked collapsibles.
+
+      ## Failed CIs
+
+      ## Drop a hey! :wave:
+
+      Don't hesitate to ask for help in the channel, we are here to assist you.
+      [Join community](${{ env.SLACK }}) if you haven't already and check out
+      #${{ inputs.slack_channel }} channel for more details on this project.
+  LATEST_COMMIT_INDICATOR: ":star: ${{ inputs.commit_id }}"
+  SUMMARY: "<summary>:point_right: ${{ inputs.ci_name }} :boom: ${{ inputs.step_name}}</summary>"
+  SUMMARY_WITH_INDICATOR: "<summary>${{ env.LATEST_COMMIT_INDICATOR }} ${{ env.SUMMARY }}</summary>"
+
+inputs:
+  ci_name:
+    description: The name of the CI
+    required: true
+  step_name:
+    description: The name of the step
+    required: true
+  commit_id:
+    description: The commit id to use
+    required: true
+  message:
+    description: The error message to use
+    required: true
+  pull_request_number:
+    description: The pull request number
+    required: true
+  slack_channel:
+    default: "general-dev"
+    description: The channel name to redirect to
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Find if comment is already present
+      uses: peter-evans/find-comment@v3
+      id: fc
+      with:
+        issue-number: ${{ inputs.pull_request_number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: "Build output"
+
+    - name: Add comment status to env
+      shell: bash
+      run: echo "COMMENT_PRESENT=${{ steps.fc.outputs.comment-id != '' }}" >> $GITHUB_ENV
+
+    - name: Create a new comment or update existing comment
+      if: env.COMMENT_PRESENT == "false"
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        issue-number: ${{ inputs.pull_request_number }}
+        body: ${{ env.MESSAGE_BODY }}
+
+    - name: Fill in the template
+      if: env.COMMENT_PRESENT == "false"
+      shell: bash
+      run: |
+        FIRST_MESSAGE="
+        <details>
+          ${{ env.SUMMARY_WITH_INDICATOR }}
+          ${{ inputs.message }}
+        </details>
+        "
+        UPDATED_TEMPLATE=$(echo "${{ env.MESSAGE_BODY }}" | sed "/## Failed CIs/a $FIRST_MESSAGE")
+        echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> $GITHUB_ENV
+
+    - name: Comment with the updated template
+      if: env.COMMENT_PRESENT == "false"
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        issue-number: ${{ inputs.pull_request_number }}
+        body: ${{ env.MESSAGE_BODY }}
+
+    - name: Remove all occurrences of latest indicator from the message for previous fails
+      if: env.COMMENT_PRESENT == "true"
+      shell: bash
+      run: |
+        PREV_MESSAGE="${{ steps.fc.outputs.comment-body }}"
+        CLEANED_MESSAGE=$(echo "$PREV_MESSAGE" | sed -E "s/${{ env.LATEST_COMMIT_INDICATOR }}//g; s/[[:space:]]+/ /g; s/^[[:space:]]+|[[:space:]]+$//g")
+        echo "MESSAGE_BODY=$CLEANED_MESSAGE" >> $GITHUB_ENV
+    
+    - name: Check if the info for failing CI and step is already written
+      if: env.COMMENT_PRESENT == "true"
+      shell: bash
+      run: |
+        IS_PRESENT=$(echo "${{ env.MESSAGE_BODY }}" | grep -c "${{ inputs.ci_name }}-${{ inputs.step_name }}")
+        echo "ALREADY_COMMENTED=$([[ $IS_PRESENT -gt 0 ]] && echo true || echo false)" >> $GITHUB_ENV
+    
+    - name: If already commented, add latest annotation to summary
+      if: env.COMMENT_PRESENT == "true" && env.ALREADY_COMMENTED == "true"
+      shell: bash
+      run: |
+        UPDATED_TEMPLATE=$(echo "${{ env.MESSAGE_BODY }}" | sed "s|${{ env.SUMMARY }}|${{ env.SUMMARY_WITH_INDICATOR }}|g")
+        echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> $GITHUB_ENV
+
+    - name: Update the message with new details
+      if: env.COMMENT_PRESENT == "true" && env.ALREADY_COMMENTED == "true"
+      shell: bash
+      run: |
+        NEW_MESSAGE="
+        <details>
+          ${{ env.SUMMARY_WITH_INDICATOR }}
+          ${{ inputs.message }}
+        </details>
+        "
+        UPDATED_TEMPLATE=$(echo "${{ env.MESSAGE_BODY }}" | sed "/## Failed CIs/a $NEW_MESSAGE")
+        echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> $GITHUB_ENV
+
+    - name: Update the comment with the new message added
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        body: ${{ env.MESSAGE_BODY }}
+        edit-mode: replace
+...

@@ -31,54 +31,37 @@ runs:
 
     - name: Set up environment
       uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
+      id: setup
       with:
         os: ${{ inputs.os }}
         python_version: ${{ inputs.python_version }}
         poetry_install_options: ${{ inputs.poetry_install_options }}
         poetry_export_options: ${{ inputs.poetry_export_options }}
 
+    - name: Comment if setup fails
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
+      if: steps.setup.outcome == 'failure'
+      with:
+        github_token: ${{ inputs.github_token }}
+        pull_request_number: ${{ github.event.pull_request.number }}
+        message: "Check for your groups in pyproject.toml and ensure they are correct."
+        step_name: "setup"
+        ci_name: "Code Formatting"
+        commit_id: ${{ github.sha }}
+
     - name: Check code style
+      id: main-format
       shell: bash
       run: poetry run ruff format --check
 
-    - name: Comment on Failure
-      if: ${{ failure() }}
-      uses: peter-evans/create-or-update-comment@v3
+    - name: Comment if setup fails
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
+      if: steps.main-format.outcome == 'failure'
       with:
-        token: ${{ inputs.github_token }}
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
-          :x: **Code Style Check Failed**
-
-          Hi @${{ github.event.pull_request.user.login }},
-
-          Your pull request **${{ github.event.pull_request.title }}** has failed the code style check on **${{ inputs.os }}** with Python **${{ inputs.python_version }}**. 
-
-          :point_right: Please address the issues to ensure consistency and adherence to the project's coding standards. You can follow the [code style guide](<link-to-docs>) to fix these issues.
-
-          :bulb: **Need help?** You can tag the maintainers by commenting `@maintainer-username` in this thread for assistance.
-
-          <details>
-          <summary> :gear: <strong>Environment Details (click to expand)</strong> </summary>
-
-          - **Workflow**: ${{ github.workflow }}
-          - **Job Name**: ${{ github.job }}
-          - **Run ID**: ${{ github.run_id }}
-          - **Run Number**: ${{ github.run_number }}
-          - **Triggered by**: ${{ github.event_name }}
-          - **Commit Message**: ${{ github.event.head_commit.message }}
-          - **Commit SHA**: `${{ github.sha }}`
-          - **Branch**: `${{ github.ref }}`
-
-          **Environment Details:**
-          - **Operating System**: `${{ inputs.os }}`
-          - **Python Version**: `${{ inputs.python_version }}`
-          - **Poetry Install Options**: `${{ inputs.poetry_install_options }}`
-          - **Poetry Export Options**: `${{ inputs.poetry_export_options }}`
-
-          </details>
-
-          :page_with_curl: You can review the full workflow logs for more information: [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-
-          :wave: **Happy Coding!** If you need any assistance, don't hesitate to reach out.
+        github_token: ${{ inputs.github_token }}
+        pull_request_number: ${{ github.event.pull_request.number }}
+        message: "Failed to set up the environment for code formatting. Try running `make fl` locally to check for errors."
+        step_name: "main-format"
+        ci_name: "Code Formatting"
+        commit_id: ${{ github.sha }}
 ...
