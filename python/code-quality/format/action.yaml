@@ -42,7 +42,7 @@ runs:
       uses: jaeaeich/monorepo-for-ci/python/comment@main
       if: steps.setup.outcome == 'failure'
       with:
-        pull_request_number: ${{ github.event.pull_request.number }}
+        pull_request_number: ${{ github.event.number }}
         message: "Check for your groups in pyproject.toml and ensure they are correct."
         step_name: "setup"
         ci_name: "Code Formatting"
@@ -58,7 +58,7 @@ runs:
       uses: jaeaeich/monorepo-for-ci/python/comment@main
       if: steps.main-format.outcome == 'failure'
       with:
-        pull_request_number: ${{ github.event.pull_request.number }}
+        pull_request_number: ${{ github.event.number }}
         message: "Failed to set up the environment for code formatting. Try running `make fl` locally to check for errors."
         step_name: "main-format"
         ci_name: "Code Formatting"
