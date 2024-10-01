@@ -36,8 +36,11 @@ runs:
     - name: Create the title of the comment
       id: globals
       shell: bash
-      run: |
-        echo "TITLE=Hey @${{ inputs.username }}, `${{ inputs.ci_name}}` failed at `${{ inputs.step_name }}`!" >> "${GITHUB_OUTPUT}"
+      run: echo "TITLE=Hey @$INPUT_USERNAME, \`$INPUT_CI_NAME\` failed at \`$INPUT_STEP_NAME\`!" >> "${GITHUB_OUTPUT}"
+      env:
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_CI_NAME: ${{ inputs.ci_name }}
+        INPUT_STEP_NAME: ${{ inputs.step_name }}
   
     - name: Find if comment is already present
       uses: peter-evans/find-comment@v3
