@@ -40,11 +40,15 @@ runs:
       continue-on-error: true
 
     - name: Comment if setup fails
-      uses: peter-evans/create-or-update-comment@v4
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       if: steps.setup.outcome == 'failure'
       with:
+        ci_name: format
+        step_name: setup
+        commit_id: ${{ github.sha }}
         issue-number: ${{ github.event.number }}
-        body: |
+        username: ${{ github.actor}}
+        message: |
           Hey $${{ github.actor }}, Failed to set up the environment for code formatting. 
           Check your `pyproject.toml`` and the dependency groups in them.
           
@@ -66,11 +70,15 @@ runs:
       run: poetry run ruff format --check
       continue-on-error: true
 
-    - name: Comment if setup fails
-      uses: peter-evans/create-or-update-comment@v4
+    - name: Comment if main-format fails
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       if: steps.main-format.outcome == 'failure'
       with:
+        ci_name: format
+        step_name: main-format
+        commit_id: ${{ github.sha }}
         issue-number: ${{ github.event.number }}
+        username: ${{ github.actor}}
         body: |
           Hey @${{ github.actor }}, The files don't have expected format. 
           Try running `make fl` or `make format-lint` locally to see the errors 
@@ -85,9 +93,4 @@ runs:
             poetry run ruff format --check
           ```
           </details>
-
-    - name: Stop the workflow if setup fails
-      if: steps.main-format.outcome == 'failure'
-      shell: bash
-      run: exit 1
 ...
