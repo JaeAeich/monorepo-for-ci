@@ -61,7 +61,7 @@ runs:
           ${{ inputs.message }}
 
     - name: Update the comment, to remind user
-      if: steps.fc.outputs.comment-id != ''
+      if: steps.find-comment.outputs.comment-id != ''
       uses: peter-evans/create-or-update-comment@v4
       with:
         comment-id: ${{ steps.find-comment.outputs.comment-id }}
