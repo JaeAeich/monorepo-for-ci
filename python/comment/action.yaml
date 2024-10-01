@@ -47,17 +47,17 @@ runs:
         comment-author: 'github-actions[bot]'
         body-includes: ${{ steps.globals.outputs.TITLE }}
 
-    - name: Fill in the template
+    - name: Create a new comment if there hasn't been one
       if: steps.find-comment.outputs.comment-id == ''
       id: fresh-comment
-      uses: peter-evans/create-or-update-comment
+      uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ inputs.issue-number }}
         body: |
           ${{ steps.globals.outputs.TITLE }}
           ${{ inputs.message }}
 
-    - name: Comment with the updated template
+    - name: Update the comment, to remind user
       if: steps.fc.outputs.comment-id != ''
       uses: peter-evans/create-or-update-comment@v4
       with:
@@ -67,7 +67,7 @@ runs:
           Hey @${{ inputs.username }}, it failed again for commit `${{ inputs.commit_id }}`!
     
     - name: Fail the workflow if error-after-comment is true
-      if: steps.find-comment.outputs.comment-id != '' && ${{ inputs.error-after-comment }}
+      if: ${{ inputs.error-after-comment }}
       shell: bash
       run: exit 1
 ...
