@@ -79,7 +79,7 @@ runs:
         commit_id: ${{ github.sha }}
         issue-number: ${{ github.event.number }}
         username: ${{ github.actor}}
-        body: |
+        message: |
           Hey @${{ github.actor }}, The files don't have expected format. 
           Try running `make fl` or `make format-lint` locally to see the errors 
           and fix some which can be fixed automatically.
