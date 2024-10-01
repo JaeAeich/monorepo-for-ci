@@ -40,7 +40,6 @@ runs:
       id: globals
       shell: bash
       run: |
-        echo "SLACK=https://slack.com" >> "${GITHUB_OUTPUT}"
         echo "BODY_INCLUDES=Hi there :sparkles:" >> "${GITHUB_OUTPUT}"
         MESSAGE_BODY="# Helper Bot :robot:\n\n\
         Hi there :sparkles:\n\n\
@@ -49,21 +48,18 @@ runs:
         Explore the below mentioned **Latest** marked collapsibles.\n\n\
         ## Failed CIs\n\n\
         ## Drop a hey! :wave:\n\n\
-        Don't hesitate to ask for help in the channel, we are here to assist you.\n\
-        [Join community]($SLACK) if you haven't already and check out\n\
-        #${{ inputs.slack_channel}} channel for more details on this project."
         echo "MESSAGE_BODY=${MESSAGE_BODY}" >> "${GITHUB_OUTPUT}"
         echo "LATEST_COMMIT_INDICATOR=:star: ${{ inputs.commit_id }}" >> "${GITHUB_OUTPUT}"
         echo "SUMMARY=<summary>:point_right: ${{ inputs.ci_name }} :boom: ${{ inputs.step_name}}</summary>" >> "${GITHUB_OUTPUT}"
         echo "SUMMARY_WITH_INDICATOR=<summary>:star: ${{ inputs.commit_id }} <summary>:point_right: ${{ inputs.ci_name }} :boom: ${{ inputs.step_name}}</summary>" >> "${GITHUB_OUTPUT}"
 
-    - name: Find if comment is already present
-      uses: peter-evans/find-comment@v3
-      id: fc
-      with:
-        issue-number: ${{ inputs.pull_request_number }}
-        comment-author: 'github-actions[bot]'
-        body-includes: ${{ steps.globals.outputs.BODY_INCLUDES }}
+    # - name: Find if comment is already present
+    #   uses: peter-evans/find-comment@v3
+    #   id: fc
+    #   with:
+    #     issue-number: ${{ inputs.pull_request_number }}
+    #     comment-author: 'github-actions[bot]'
+    #     body-includes: ${{ steps.globals.outputs.BODY_INCLUDES }}
 
     - name: Fill in the template
       if: steps.fc.outputs.comment-id == ''
@@ -75,49 +71,49 @@ runs:
         echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
 
     - name: Comment with the updated template
-      if: steps.fc.outputs.comment-id == ''
+      # if: steps.fc.outputs.comment-id == ''
       uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ inputs.pull_request_number }}
         body: ${{ steps.fill-template.outputs.MESSAGE_BODY }}
 
-    - name: Remove all occurrences of latest indicator from the message for previous fails
-      if: steps.fc.outputs.comment-id != ''
-      id: clean-message
-      shell: bash
-      run: |
-        PREV_MESSAGE="${{ steps.fc.outputs.comment-body }}"
-        CLEANED_MESSAGE=$(echo "$PREV_MESSAGE" | sed -E "s/${{ steps.globals.outputs.LATEST_COMMIT_INDICATOR }}//g; s/[[:space:]]+/ /g; s/^[[:space:]]+|[[:space:]]+$//g")
-        echo "MESSAGE_BODY=$CLEANED_MESSAGE" >> "${GITHUB_OUTPUT}"
-    
-    - name: Check if the info for failing CI and step is already written
-      if: steps.fc.outputs.comment-id != ''
-      id: check-comment
-      shell: bash
-      run: |
-        IS_PRESENT=$(echo "${{ steps.clean-message.outputs.MESSAGE_BODY }}" | grep -c "${{ inputs.ci_name }}-${{ inputs.step_name }}")
-        echo "ALREADY_COMMENTED=$([[ $IS_PRESENT -gt 0 ]] && echo true || echo false)" >> "${GITHUB_ENV}"
-    
-    - name: If already commented, add latest annotation to summary
-      if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.check-comment.outputs.ALREADY_COMMENTED == 'true'
-      shell: bash
-      run: |
-        UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "s|${{ steps.globals.outputs.SUMMARY }}|${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}|g")
-        echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
+    # - name: Remove all occurrences of latest indicator from the message for previous fails
+    #   if: steps.fc.outputs.comment-id != ''
+    #   id: clean-message
+    #   shell: bash
+    #   run: |
+    #     PREV_MESSAGE="${{ steps.fc.outputs.comment-body }}"
+    #     CLEANED_MESSAGE=$(echo "$PREV_MESSAGE" | sed -E "s/${{ steps.globals.outputs.LATEST_COMMIT_INDICATOR }}//g; s/[[:space:]]+/ /g; s/^[[:space:]]+|[[:space:]]+$//g")
+    #     echo "MESSAGE_BODY=$CLEANED_MESSAGE" >> "${GITHUB_OUTPUT}"
 
-    - name: Update the message with new details
-      if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.check-comment.outputs.ALREADY_COMMENTED == 'true'
-      id: update-message
-      shell: bash
-      run: |
-        NEW_MESSAGE="<details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
-        UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $NEW_MESSAGE")
-        echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
+    # - name: Check if the info for failing CI and step is already written
+    #   if: steps.fc.outputs.comment-id != ''
+    #   id: check-comment
+    #   shell: bash
+    #   run: |
+    #     IS_PRESENT=$(echo "${{ steps.clean-message.outputs.MESSAGE_BODY }}" | grep -c "${{ inputs.ci_name }}-${{ inputs.step_name }}")
+    #     echo "ALREADY_COMMENTED=$([[ $IS_PRESENT -gt 0 ]] && echo true || echo false)" >> "${GITHUB_ENV}"
 
-    - name: Update the comment with the new message added
-      uses: peter-evans/create-or-update-comment@v4
-      with:
-        comment-id: ${{ steps.fc.outputs.comment-id }}
-        body: ${{ steps.update-message.outputs.MESSAGE_BODY }}
-        edit-mode: replace
+    # - name: If already commented, add latest annotation to summary
+    #   if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.check-comment.outputs.ALREADY_COMMENTED == 'true'
+    #   shell: bash
+    #   run: |
+    #     UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "s|${{ steps.globals.outputs.SUMMARY }}|${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}|g")
+    #     echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
+
+    # - name: Update the message with new details
+    #   if: steps.globals.outputs.COMMENT_PRESENT == 'true' && steps.check-comment.outputs.ALREADY_COMMENTED == 'true'
+    #   id: update-message
+    #   shell: bash
+    #   run: |
+    #     NEW_MESSAGE="<details>${{ steps.globals.outputs.SUMMARY_WITH_INDICATOR }}${{ inputs.message }}</details>"
+    #     UPDATED_TEMPLATE=$(echo "${{ steps.globals.outputs.MESSAGE_BODY }}" | sed "/## Failed CIs/a $NEW_MESSAGE")
+    #     echo "MESSAGE_BODY=$UPDATED_TEMPLATE" >> "${GITHUB_OUTPUT}"
+
+    # - name: Update the comment with the new message added
+    #   uses: peter-evans/create-or-update-comment@v4
+    #   with:
+    #     comment-id: ${{ steps.fc.outputs.comment-id }}
+    #     body: ${{ steps.update-message.outputs.MESSAGE_BODY }}
+    #     edit-mode: replace
 ...
