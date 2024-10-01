@@ -41,11 +41,7 @@ runs:
       shell: bash
       run: |
         echo "BODY_INCLUDES=Hi there :sparkles:" >> "${GITHUB_OUTPUT}"
-        MESSAGE_BODY="# Helper Bot :robot:\n\n\
-        Hi there :sparkles:\n\n\
-        I'll try to help and redirect you @${{ inputs.username }} to the right documentation and \n\
-        quick fixes for CI breaks, so check this message for new updates.\n\
-        Explore the below mentioned **Latest** marked collapsibles.\n\n\
+        MESSAGE_BODY="# Helper Bot :robot:\n\n\Hi there :sparkles:\n\n\I'll try to help and redirect you @${{ inputs.username }} to the right documentation and \n\quick fixes for CI breaks, so check this message for new updates.\n\Explore the below mentioned **Latest** marked collapsibles.\n\n\
         ## Failed CIs\n\n\
         ## Drop a hey! :wave:\n\n\
         echo "MESSAGE_BODY=${MESSAGE_BODY}" >> "${GITHUB_OUTPUT}"
