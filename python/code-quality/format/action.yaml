@@ -45,7 +45,7 @@ runs:
       with:
         issue-number: ${{ github.event.number }}
         body: |
-          "Hey ${{ github.actor }}, Failed to set up the environment for code formatting. 
+          Hey $${{ github.actor }}, Failed to set up the environment for code formatting. 
           Check your `pyproject.toml`` and the dependency groups in them.
           
           <details>
@@ -53,7 +53,7 @@ runs:
           Note that by default, the `code_quality` group is used for code quality checks.
           if you have manually changed the group, make sure to update the 
           `poetry_install_options` input accordingly in the workflow file.
-          </details>"
+          </details>
 
     - name: Stop the workflow if setup fails
       if: steps.setup.outcome == 'failure'
@@ -72,12 +72,19 @@ runs:
       with:
         issue-number: ${{ github.event.number }}
         body: |
-          "Hey @{{ github.actor }}, The files don't have expected format. 
+          Hey @${{ github.actor }}, The files don't have expected format. 
           Try running `make fl` or `make format-lint` locally to see the errors 
           and fix some which can be fixed automatically.
           
           The above mentioned is the default command, check you make file if there 
-          are any changes."
+          are any changes.
+          <details>
+          <summary>Makefile</summary>
+          ```make
+          fl:
+            poetry run ruff format --check
+          ```
+          </details>
 
     - name: Stop the workflow if setup fails
       if: steps.main-format.outcome == 'failure'
