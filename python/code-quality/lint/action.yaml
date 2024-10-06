@@ -66,6 +66,7 @@ runs:
       uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: format
+        error-after-comment: false
         step_name: format
         commit_id: ${{ github.sha }}
         issue-number: ${{ github.event.number }}
