@@ -3,23 +3,23 @@ name: Lint Code
 description: Lints the code to ensure code quality and adherence to standards.
 
 inputs:
-  os: 
+  os:
     description: The operating system to use
     default: ubuntu-latest
     required: false
   python_version:
     description: Python version to use
-    default: "3.12"
+    default: '3.12'
     required: false
   poetry_install_options:
     description: Options for installing dependencies via poetry
     required: false
-    default: "--only=code_quality --no-root"
+    default: '--only=code_quality --no-root'
   poetry_export_options:
     description: Options for exporting dependencies to check for hash
       changes for cache invalidation
     required: false
-    default: "--only=code_quality"
+    default: '--only=code_quality'
 
 runs:
   using: composite
@@ -28,7 +28,7 @@ runs:
       uses: actions/checkout@v4
 
     - name: Set up environment
-      uses: elixir-cloud-aai/actions/python/setup/poetry@main
+      uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
       continue-on-error: true
       with:
         os: ${{ inputs.os }}
@@ -38,7 +38,7 @@ runs:
 
     - name: Comment on PR
       if: steps.setup.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: lint
         step_name: setup
@@ -47,7 +47,7 @@ runs:
         username: ${{ github.actor}}
         message: |
           Check your `pyproject.toml` and the dependency groups in them.
-          
+
           <details>
           <summary>Env used for CI</summary>
             OS: ${{ inputs.os }}
@@ -63,7 +63,7 @@ runs:
 
     - name: Comment on PR
       if: steps.lint.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: format
         step_name: format
@@ -74,7 +74,7 @@ runs:
           With the environment set up and dependencies installed, 
           run `poetry run ruff check --fix` to check and fix some lint 
           issues.
-          
+
           <details>
           <summary>Use Makefile command</summary>
             Default makefile from cookiecutter template has a command 
@@ -83,4 +83,3 @@ runs:
             Run make in the root directory of the project, to see all the 
             available commands.
           </details>
-...

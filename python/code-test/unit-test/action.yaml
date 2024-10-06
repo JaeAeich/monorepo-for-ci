@@ -8,15 +8,15 @@ inputs:
     description: The operating system to use
     required: false
   python_version:
-    default: "3.12"
+    default: '3.12'
     description: The version of Python to use
     required: false
   poetry_install_options:
-    default: "--with=test"
+    default: '--with=test'
     description: Options for installing dependencies via poetry
     required: false
   poetry_export_options:
-    default: "--with=test"
+    default: '--with=test'
     description: Options for exporting dependencies for cache invalidation
     required: false
   codecov_token:
@@ -25,7 +25,7 @@ inputs:
   file_path:
     description: The path to the file or directory to unit test
     required: false
-    default: "tests/test_unit"
+    default: 'tests/test_unit'
 
 runs:
   using: composite
@@ -35,7 +35,7 @@ runs:
 
     - name: Set up environment
       id: setup
-      uses: elixir-cloud-aai/actions/python/setup/poetry@main
+      uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
       with:
         os: ${{ inputs.os }}
         python_version: ${{ inputs.python_version }}
@@ -44,7 +44,7 @@ runs:
 
     - name: Comment on PR
       if: steps.setup.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: unit-test
         step_name: setup
@@ -54,7 +54,7 @@ runs:
         message: |
           Test depend on the main package dependecies and `test`
           group in `pyproject.toml`.
-          
+
           <details>
           <summary>Env used for CI</summary>
             OS: ${{ inputs.os }}
@@ -74,7 +74,7 @@ runs:
 
     - name: Comment on PR
       if: steps.unit-test.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: unit-test
         step_name: test
@@ -84,7 +84,7 @@ runs:
         message: |
           Check your unit tests in ${{ inputs.file_path }},
           and the dependencies in `pyproject.toml`. 
-          
+
           Run `poetry run pytest --cov=${{ inputs.file_path }}` to see the errors.
 
     - name: Upload coverage to Codecov
@@ -99,7 +99,7 @@ runs:
 
     - name: Comment on PR
       if: ${{ inputs.codecov_token }} == null || ${{ inputs.codecov_token }} == ''
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: unit-test
         step_name: upload
@@ -109,4 +109,3 @@ runs:
         message: |
           Codecov token is missing. Please ask admin to add the token to the 
           secrets. The coverage report was generated but not uploaded.
-...

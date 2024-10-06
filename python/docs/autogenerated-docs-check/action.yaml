@@ -8,15 +8,15 @@ inputs:
     description: The operating system to use
     required: false
   python_version:
-    default: "3.12"
+    default: '3.12'
     description: The version of Python to use
     required: false
   poetry_install_options:
-    default: "--with=docs --with=types --no-root"
+    default: '--with=docs --with=types --no-root'
     description: Options to pass to poetry install
     required: false
   poetry_export_options:
-    default: "--with=docs --with=types"
+    default: '--with=docs --with=types'
     description: Options to pass to poetry export for cache invalidation
     required: false
   file_path:
@@ -26,7 +26,7 @@ inputs:
   auto_doc_dir:
     description: Directory path that stores all the auto generated docs for
       the packages
-    default: "/docs/source/pages"
+    default: '/docs/source/pages'
     required: false
 
 runs:
@@ -37,7 +37,7 @@ runs:
 
     - name: Set up environment
       id: setup
-      uses: elixir-cloud-aai/actions/python/setup/poetry@main
+      uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
       continue-on-error: true
       with:
         os: ${{ inputs.os }}
@@ -47,7 +47,7 @@ runs:
 
     - name: Comment on PR
       if: steps.setup.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: docs
         step_name: setup
@@ -57,7 +57,7 @@ runs:
         message: |
           Check your `pyproject.toml` and the dependency groups in them,
           especially `docs` and `types` group.
-          
+
           <details>
           <summary>Env used for CI</summary>
             OS: ${{ inputs.os }}
@@ -80,7 +80,7 @@ runs:
     # This should not be possible, but just in case
     - name: Comment on PR
       if: ${{ env.file_path }} == ""
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: docs
         step_name: get-file-path
@@ -116,7 +116,7 @@ runs:
 
     - name: Comment on PR
       if: steps.compare-docs.outcome == 'failure'
-      uses: elixir-cloud-aai/actions/github/comment@main
+      uses: jaeaeich/monorepo-for-ci/python/comment@main
       with:
         ci_name: docs
         step_name: compare-docs
@@ -135,4 +135,3 @@ runs:
             Default makefile from cookiecutter template has a command 
             `make docs` to run the sphinx-apidoc.
           </details>
-...

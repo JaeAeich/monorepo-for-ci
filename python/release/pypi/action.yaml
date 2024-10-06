@@ -8,15 +8,15 @@ inputs:
     description: The operating system to use
     required: false
   python_version:
-    default: "3.12"
+    default: '3.12'
     description: The version of Python to use
     required: false
   poetry_install_options:
-    default: "--only=main"
+    default: '--only=main'
     description: Additional options to pass to poetry install
     required: false
   poetry_export_options:
-    default: "--only=main"
+    default: '--only=main'
     description: Options to pass to poetry export for cache invalidation
     required: false
   pypi_token:
@@ -29,7 +29,7 @@ runs:
     - uses: actions/checkout@v4
 
     - name: Set up environment
-      uses: elixir-cloud-aai/actions/python/setup/poetry@main
+      uses: jaeaeich/monorepo-for-ci/python/setup/poetry@main
       with:
         os: ${{ inputs.os }}
         python-version: ${{ inputs.python_version }}
@@ -43,4 +43,3 @@ runs:
     - name: Publish package to PyPI
       shell: bash
       run: poetry publish -u __token__ -p ${{ inputs.pypi_token }}
-...
