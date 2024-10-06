@@ -49,7 +49,7 @@ runs:
         ci_name: type-check
         step_name: setup
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Check your `pyproject.toml` and the dependency groups in them,
@@ -76,7 +76,7 @@ runs:
         ci_name: type-check
         step_name: type-check
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           With the environment set up and dependencies installed, 

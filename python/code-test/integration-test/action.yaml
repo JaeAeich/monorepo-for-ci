@@ -50,7 +50,7 @@ runs:
         ci_name: integration-test
         step_name: setup
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Test depend on the main package dependecies and `test`
@@ -81,7 +81,7 @@ runs:
         ci_name: integration-test
         step_name: test
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Check your integration tests in ${{ inputs.file_path }},
@@ -106,7 +106,7 @@ runs:
         ci_name: integration-test
         step_name: upload
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Codecov token is missing. Please ask admin to add the token to the 

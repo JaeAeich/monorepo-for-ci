@@ -43,7 +43,7 @@ runs:
         ci_name: lint
         step_name: setup
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Check your `pyproject.toml` and the dependency groups in them.
@@ -68,7 +68,7 @@ runs:
         ci_name: format
         step_name: format
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           With the environment set up and dependencies installed, 
@@ -83,4 +83,3 @@ runs:
             Run make in the root directory of the project, to see all the 
             available commands.
           </details>
-...

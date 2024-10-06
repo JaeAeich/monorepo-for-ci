@@ -52,7 +52,7 @@ runs:
         ci_name: docs
         step_name: setup
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Check your `pyproject.toml` and the dependency groups in them,
@@ -85,7 +85,7 @@ runs:
         ci_name: docs
         step_name: get-file-path
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Couldn't retrieve project name from `pyproject.toml` and 
@@ -121,7 +121,7 @@ runs:
         ci_name: docs
         step_name: compare-docs
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           API documentation is out of date. Run 

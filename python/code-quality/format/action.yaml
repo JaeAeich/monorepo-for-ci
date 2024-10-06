@@ -45,7 +45,7 @@ runs:
         ci_name: format
         step_name: setup
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Check your `pyproject.toml` and the dependency groups in them,
@@ -71,23 +71,23 @@ runs:
       with:
         ci_name: format
         step_name: format
-        error-after-comment: "false"
+        error_after_comment: 'false'
         commit_id: ${{ github.sha }}
-        issue-number: ${{ github.event.number }}
+        issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
           Code style issues were detected. To resolve them, ensure the 
           environment is set up and dependencies are installed, then run:
-          
+
           ```bash
           poetry run ruff format
           ```
-          
+
           This will check and automatically fix some formatting issues.
 
           <details>
           <summary>**Using the Makefile**</summary>
-          
+
           The default Makefile from the cookiecutter template includes a 
           `make fl` command for running these checks.
 
@@ -106,4 +106,3 @@ runs:
         git add .
         git commit -m "generated"
         git push
-...
