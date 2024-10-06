@@ -1,34 +1,34 @@
 ---
-name: Commenting bot to report CI failures and suggest fixes
+name: Commenting bot to report CI failures
 description: |
-  This action is used to comment on a pull request with the CI failure details
-  and suggest fixes to the user. It checks if the comment is already present and
-  updates the comment with the latest CI failure details.
+  This action is used to comment on a pull request with the CI failure details.
+  It checks if the comment is already present and updates the comment with the 
+  latest CI failure details.
 
 inputs:
-  issue-number:
-    description: The pull request number
-    required: true
   ci_name:
     description: The name of the CI
-    required: true
-  step_name:
-    description: The name of the step
     required: true
   commit_id:
     description: The commit id to use
     required: true
+  error-after-comment:
+    description: Stop the workflow after commenting
+    required: false
+    default: "true"
+  issue-number:
+    description: The issue number to comment on
+    required: true
   message:
-    description: The error message to use
+    description: The message to include in the comment
+    required: true
+  step_name:
+    description: The name of the step the failed in the
     required: true
   username:
     description: The username to tag in the message
     default: jaeaeich
     required: false
-  error-after-comment:
-    description: Stop the workflow after commenting
-    required: false
-    default: "true"
 
 runs:
   using: composite
@@ -36,7 +36,7 @@ runs:
     - name: Create the title of the comment
       id: globals
       shell: bash
-      run: echo "TITLE=Hey @$INPUT_USERNAME, \`$INPUT_CI_NAME\` failed at \`$INPUT_STEP_NAME\`!" >> "${GITHUB_OUTPUT}"
+      run: echo "TITLE=Hey @$INPUT_USERNAME, \`$INPUT_CI_NAME\` CI failed at \`$INPUT_STEP_NAME\` step!" >> "${GITHUB_OUTPUT}"
       env:
         INPUT_USERNAME: ${{ inputs.username }}
         INPUT_CI_NAME: ${{ inputs.ci_name }}
@@ -67,7 +67,7 @@ runs:
         comment-id: ${{ steps.find-comment.outputs.comment-id }}
         issue-number: ${{ inputs.issue-number }}
         body: |
-          Hey @${{ inputs.username }}, it failed again for commit `${{ inputs.commit_id }}`!
+          Hey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
     
     - name: Fail the workflow if error-after-comment is true
       if: ${{ inputs.error-after-comment }}
