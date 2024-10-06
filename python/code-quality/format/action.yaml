@@ -85,7 +85,8 @@ runs:
           This will check and automatically fix some formatting issues.
 
           <details>
-          <summary>Using the Makefile</summary>
+          <summary>**Using the Makefile**</summary>
+          
           The default Makefile from the cookiecutter template includes a 
           `make fl` command for running these checks.
 
