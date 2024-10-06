@@ -74,6 +74,5 @@ runs:
       run: exit 1
 
     - name: Pass the workflow if error_after_comment is false
-      if: ${{ inputs.error_after_comment }} != 'true'
       shell: bash
-      run: exit 0
+      run: echo "No error after comment"
