@@ -70,14 +70,10 @@ runs:
 
     - name: Pass the workflow if error_after_comment is false
       shell: bash
-      run: echo ${{ inputs.error_after_comment }}
-
-    - name: Pass the workflow if error_after_comment is false
-      shell: bash
-      if: ${{ inputs.error_after_comment }} == 'false'
+      if: ${{ inputs.error_after_comment == "false" }}
       run: echo ${{ inputs.error_after_comment }}
 
     - name: Fail the workflow if error_after_comment is true
-      if: ${{ inputs.error_after_comment }} == 'true'
+      if: ${{ inputs.error_after_comment == "true"}}
       shell: bash
       run: exit 1
