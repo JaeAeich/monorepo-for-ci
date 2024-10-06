@@ -96,7 +96,7 @@ runs:
           </details>
 
     - name: Push changes
-      if: steps.format.outcome == 'success'
+      if: steps.format.outcome == 'failure'
       shell: bash
       run: |
         date > generated.txt
