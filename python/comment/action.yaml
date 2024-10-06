@@ -68,11 +68,11 @@ runs:
         body: |
           Hey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
 
+    - name: Pass the workflow if error_after_comment is false
+      shell: bash
+      run: echo "No error after comment"
+
     - name: Fail the workflow if error_after_comment is true
       if: ${{ inputs.error_after_comment }} == 'true'
       shell: bash
       run: exit 1
-
-    - name: Pass the workflow if error_after_comment is false
-      shell: bash
-      run: echo "No error after comment"
