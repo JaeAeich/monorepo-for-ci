@@ -71,7 +71,7 @@ runs:
       with:
         ci_name: format
         step_name: format
-        error_after_comment: 'false'
+        error_after_comment: false
         commit_id: ${{ github.sha }}
         issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
