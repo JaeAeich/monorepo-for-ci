@@ -72,3 +72,8 @@ runs:
       if: ${{ inputs.error_after_comment }} == 'true'
       shell: bash
       run: exit 1
+
+    - name: Pass the workflow if error_after_comment is false
+      if: ${{ inputs.error_after_comment }} == 'false'
+      shell: bash
+      run: exit 0
