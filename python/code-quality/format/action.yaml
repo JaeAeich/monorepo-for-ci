@@ -93,4 +93,16 @@ runs:
           To view all available commands, run `make` in the project's root 
           directory.
           </details>
+
+    - name: Push changes
+      if: steps.format.outcome == 'success'
+      shell: bash
+      run: |
+        date > generated.txt
+        # Note: the following account information will not work on GHES
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "generated"
+        git push
 ...
