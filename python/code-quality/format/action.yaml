@@ -75,15 +75,21 @@ runs:
         issue-number: ${{ github.event.number }}
         username: ${{ github.actor}}
         message: |
-          With the environment set up and dependencies installed, 
-          run `poetry run ruff format` to check and fix some code style issues.
+          Code style issues were detected. To resolve them, ensure the 
+          environment is set up and dependencies are installed, then run:
+          
+          ```bash
+          poetry run ruff format
+          ```
+          
+          This will check and automatically fix some formatting issues.
 
           <details>
-          <summary>Use Makefile command</summary>
-            Default makefile from cookiecutter template has a command 
-            `make fl` to run the check.
+          <summary>Using the Makefile</summary>
+          The default Makefile from the cookiecutter template includes a 
+          `make fl` command for running these checks.
 
-            Run make in the root directory of the project, to see all the 
-            available commands.
+          To view all available commands, run `make` in the project's root 
+          directory.
           </details>
 ...
