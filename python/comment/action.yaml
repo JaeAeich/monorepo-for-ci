@@ -27,8 +27,7 @@ inputs:
     required: true
   username:
     description: The username to tag in the message
-    default: jaeaeich
-    required: false
+    required: true
 
 runs:
   using: composite
@@ -70,7 +69,7 @@ runs:
           Hey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
     
     - name: Fail the workflow if error-after-comment is true
-      if: ${{ inputs.error-after-comment }}
+      if: ${{ inputs.error-after-comment }} == 'true'
       shell: bash
       run: exit 1
 ...
