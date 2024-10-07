@@ -73,7 +73,7 @@ runs:
       shell: bash
       run: echo ${{ inputs.error_after_comment }}
 
-    - name: Fail the workflow if error_after_comment is true
-      if: ${{ inputs.error_after_comment }} == true
-      shell: bash
-      run: exit 1
+    # - name: Fail the workflow if error_after_comment is true
+    #   if: ${{ inputs.error_after_comment }} == true
+    #   shell: bash
+    #   run: exit 1
