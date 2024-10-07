@@ -72,5 +72,9 @@ runs:
       shell: bash
       run: |
         if [ "${{ inputs.error_after_comment }}" == "true" ]; then
+          echo "Exiting the workflow"
           exit 1
+        else
+          echo "Continuing the workflow"
         fi
+        
