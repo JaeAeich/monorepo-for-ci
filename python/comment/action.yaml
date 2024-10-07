@@ -57,6 +57,7 @@ runs:
         issue-number: ${{ inputs.issue_number }}
         body: |
           ${{ steps.globals.outputs.TITLE }}
+
           ${{ inputs.message }}
 
     - name: Update the comment, to remind user
