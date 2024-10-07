@@ -71,7 +71,7 @@ runs:
       with:
         ci_name: format
         step_name: format
-        error_after_comment: "false"
+        error_after_comment: false
         commit_id: ${{ github.sha }}
         issue_number: ${{ github.event.number }}
         username: ${{ github.actor}}
@@ -94,6 +94,10 @@ runs:
           To view all available commands, run `make` in the project's root 
           directory.
           </details>
+
+    - name: Check for changes
+      shell: bash
+      run: echo I am checking for changes
 
     - name: Push changes
       if: steps.format.outcome == 'failure'
