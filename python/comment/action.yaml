@@ -66,14 +66,11 @@ runs:
         comment-id: ${{ steps.find-comment.outputs.comment-id }}
         issue-number: ${{ inputs.issue_number }}
         body: |
-          Hey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
+          \nHey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
 
-    - name: Pass the workflow if error_after_comment is false
-      if: ${{ inputs.error_after_comment }} == false
+    - name: Pass or fail the workflow
       shell: bash
-      run: echo ${{ inputs.error_after_comment }}
-
-    # - name: Fail the workflow if error_after_comment is true
-    #   if: ${{ inputs.error_after_comment }} == true
-    #   shell: bash
-    #   run: exit 1
+      run: |
+        if [ "${{ inputs.error_after_comment }}" == "true" ]; then
+          exit 1
+        fi
