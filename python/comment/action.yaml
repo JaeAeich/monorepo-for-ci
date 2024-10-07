@@ -66,7 +66,8 @@ runs:
         comment-id: ${{ steps.find-comment.outputs.comment-id }}
         issue-number: ${{ inputs.issue_number }}
         body: |
-          \nHey @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
+          ${{ steps.find-comment.outputs.body }}
+          @${{ inputs.username }}, it failed again for commit ${{ inputs.commit_id }}!
 
     - name: Pass or fail the workflow
       shell: bash
