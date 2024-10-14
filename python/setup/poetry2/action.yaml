@@ -99,7 +99,6 @@ runs:
           else
             # Export all groups if no options provided
             poetry export \
-            --all-group \
             --format=requirements.txt \
             --output=requirements.txt
           fi
