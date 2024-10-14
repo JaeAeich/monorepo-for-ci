@@ -123,7 +123,9 @@ runs:
       if: ${{ inputs.dependencies != '' }} and steps.poetry-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        poetry init --no-interaction
+        if [ ! -f pyproject.toml ]; then
+          poetry init --no-interaction
+        fi
         poetry add $(echo ${{ inputs.dependencies }} | tr "," " ") --no-interaction
 
     - name: Poetry cache
