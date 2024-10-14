@@ -112,7 +112,7 @@ runs:
     - name: Poetry dependency cache
       uses: actions/cache@v4
       id: poetry-dep-cache
-      if: ${{ inputs.dependencies != '' }}
+      if: ${{ inputs.dependencies }}
       with:
         path: ${{ steps.poetry-cache-location.outputs.poetry-venv-location }}
         key: ${{ runner.os }}-[python-
@@ -120,7 +120,7 @@ runs:
              ${{ env.DEP_HASH }}]
 
     - name: Install dependencies 
-      if: ${{ inputs.dependencies != '' }} and steps.poetry-dep-cache.outputs.cache-hit != 'true'
+      if: ${{ inputs.dependencies }} and steps.poetry-dep-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         # Initialize poetry if no pyproject.toml file is found
