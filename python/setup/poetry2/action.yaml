@@ -58,9 +58,9 @@ runs:
       with:
         path: ${{ steps.pipx-env-setup.outputs.pipx-cache-path }}
         key: ${{ runner.os }}-python-
-             ${{ steps.setup-python.outputs.python_version }}-
-             pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-
-             poetry-${{ inputs.poetry_version }}
+          ${{ inputs.python_version }}-
+          pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-
+          poetry-${{ inputs.poetry_version }}
 
     - name: Install poetry, if poetry is not cached
       if: ${{ steps.pipx-poetry-cache.outputs.cache-hit != 'true' }}
@@ -116,8 +116,8 @@ runs:
       with:
         path: ${{ steps.poetry-cache-location.outputs.poetry-venv-location }}
         key: ${{ runner.os }}-[python-
-             ${{ steps.setup-python.outputs.python_version }}]-deps-[
-             ${{ env.DEP_HASH }}]
+          ${{ inputs.python_version }}]-deps-[
+          ${{ env.DEP_HASH }}]
 
     - name: Install dependencies 
       if: ${{ inputs.dependencies != '' && steps.poetry-dep-cache.outputs.cache-hit != 'true' }}
@@ -137,8 +137,8 @@ runs:
       with:
         path: ${{ steps.poetry-cache-location.outputs.poetry-venv-location }}
         key: ${{ runner.os }}-[python-
-             ${{ steps.setup-python.outputs.python_version }}]-[
-             ${{ env.DEP_HASH }}]-[${{ inputs.poetry_install_options }}]
+          ${{ inputs.python_version }}]-[
+          ${{ env.DEP_HASH }}]-[${{ inputs.poetry_install_options }}]
 
     - name: Poetry install
       if: ${{ inputs.dependencies == '' &&  steps.poetry-cache.outputs.cache-hit != 'true' }}
